@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для моего Тимура ❤️</title>
+    <style>
+        @font-face {
+            font-family: 'ClassRoomCursive';
+            src: url('ClassRoomCursive Regular.ttf') format('truetype'),
+                 url('ClassRoomCursive Regular.otf') format('opentype');
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a1a;
+            font-family: 'ClassRoomCursive', cursive;
+            color: #ffffd0;
+            text-align: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: fallingStar linear infinite;
+        }
+
+        @keyframes fallingStar {
+            from {
+                transform: translateY(-100vh);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100vh);
+                opacity: 1;
+            }
+        }
+        @keyframes fallDown {
+            from { transform: translateY(-30px); }
+            to { transform: translateY(500px); }
+        }
+
+        .static-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 1s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #fff5b3, 0 0 20px #fff5b3, 0 0 30px #fff5b3;
+            color: #ffffd0;
+        }
+
+        .love-stats {
+            font-size: 1.5em;
+            margin: 10px 0;
+            padding: 10px;
+            line-height: 1.2;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            text-shadow: 0 0 5px #fff5b3;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1000px;
+            height: 300px;
+            position: relative;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .pixel-heart {
+            position: absolute;
+            font-size: 20px;
+            cursor: pointer;
+            user-select: none;
+            animation: fallDown linear;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-heart {
+            position: absolute;
+            font-size: 30px;
+            cursor: pointer;
+            user-select: none;
+            animation: fallDown linear;
+        }
+
+        @keyframes fallDown {
+            from { transform: translateY(-30px); }
+            to { transform: translateY(300px); }
+        }
+
+        .catcher {
+            position: absolute;
+            bottom: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            user-select: none;
+            transition: left 0.1s ease;
+        }
+
+        .score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2em;
+            color: #ffffd0;
+            text-shadow: 0 0 5px #fff5b3;
+        }
+
+        .message-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px;
+            border-radius: 5px;
+            width: auto;
+            height: auto;
+            display: none;
+            z-index: 1000;
+            color: #ffffd0;
+            text-align: center;
+            font-size: 1.2em;
+            text-shadow: 0 0 5px #fff5b3;
+            animation: fade 1s ease-in-out;
+            pointer-events: none;
+            background: none;
+        }
+
+        @keyframes fade {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .heart {
+            position: absolute;
+            pointer-events: none;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .love-stats {
+                font-size: 1.2em;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Мой дорогой Тимур ❤️</h1>
+        <div class="love-stats">
+            <p>Мы вместе уже:</p>
+            <div id="time-together"></div>
+        </div>
+        <div class="message">
+            <p>С того дня моя жизнь наполнилась искренним счастьем ❤️</p>
+            <p>Я очень сильно тебя люблю! ❤️</p>
+        </div>
+        <div class="game-container">
+            <div class="score">Очки: 0</div>
+        </div>
+    </div>
+
+    <script>
+        // Создание звездного неба
+        function createStars() {
+            const starsCount = 100;
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'static-star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                document.body.appendChild(star);
+            }
+        }
+
+        function createFallingStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.body.appendChild(star);
+
+            star.addEventListener('animationend', () => {
+                document.body.removeChild(star);
+            });
+        }
+
+        // Игра "Собери сердечки"
+        let score = 0;
+        let gameStarted = false;
+        let lives = 3;
+        const messages = [
+            'Ты - мое счастье! ❤️',
+            'С тобой всё прекрасно! 💕',
+            'Люблю тебя! 💖',
+            'Ты - моё вдохновение! ✨',
+            'Спасибо, что ты есть! 🌟',
+            'Ты - мой смысл жизни! 🌹',
+            'С тобой я самая счастливая! 🌸',
+            'Ты делаешь меня лучше! 🌺',
+            'Моя любовь к тебе бесконечна! 💫',
+            'Ты мой зайка! 🐰',
+            'Ты мой котенок! 🐱',
+            'Ты самый красивый! 🌹',
+            'Ты самый заботливый! 🤗',
+            'Ты мое сокровище! 💎',
+            'Ты мое счастье! ☀️',
+            'Ты мое всё! 💖',
+            'Ты мой ангел! 👼',
+            'Ты мой идеал! ✨',
+            'Ты - мой лучик солнца! 🌞',
+            'С тобой я чувствую себя особенной! 🌷',
+            'Ты - мой самый дорогой человек! 💎',
+            'Я благодарна судьбе за тебя! 🍀',
+            'Ты - мой идеал! 🌟',
+            'С тобой я чувствую себя защищённой! 🛡️',
+            'Ты - мой ангел-хранитель! 👼',
+            'Я счастлива быть твоей! 💍',
+            'Ты - мой самый лучший выбор! 🏆',
+            'С тобой я чувствую себя любимой! 💞',
+            'Ты - мой самый близкий человек! 🤗',
+            'Ты - мое сокровище! 💎',
+            'Ты - мое вдохновение! ✨',
+            'Ты - мой лучший друг! 👫',
+            'Ты - мое счастье! 🌈',
+            'Ты - мой герой! 🦸‍♂️',
+            'Ты - мое солнце! ☀️',
+            'Ты - мой принц! 👑',
+            'Ты - мое чудо! 🌟',
+            'Ты - мой мир! 🌍',
+            'Ты - мое сердце! 💓',
+            'Ты - мой рай! 🌴',
+            'Ты - мое сокровище! 💖',
+            'Ты - мое счастье! 🌸',
+            'Ты - мое всё! 💫',
+            'Я люблю слушать как бьется твое сердце! 💞',
+            'Каждый момент с тобой - это волшебство! ✨',
+            'Твоя улыбка - для меня самая большая радость! 😊',
+            'В твоих объятиях я нахожу покой! 🤗',
+            'Твой смех - самый прекрасный звук на земле! 🎶',
+            'С тобой каждый день - это счастье! 🌈',
+            'Твоя забота делает меня сильнее! 💪',
+            'Твоя любовь - мое всё! 🧭',
+            'В твоих глазах я вижу свое будущее! 👀',
+            'Твоя нежность - мое вдохновение! 🌺',
+            'С тобой я чувствую себя самой счастливой! 😍'
+        ];
+
+        const livesElement = document.createElement('div');
+        livesElement.className = 'lives';
+        livesElement.style.position = 'absolute';
+        livesElement.style.top = '10px';
+        livesElement.style.left = '10px';
+        livesElement.style.color = '#ffffd0';
+        livesElement.style.textShadow = '0 0 5px #fff5b3';
+        livesElement.style.fontSize = '1.2em';
+        livesElement.textContent = `Жизни: ${'❤️'.repeat(lives)}`;
+        document.querySelector('.game-container').appendChild(livesElement);
+
+        // Инициализация игры
+        startGame();
+        function startGame() {
+            if (gameStarted) return;
+            gameStarted = true;
+
+            const gameContainer = document.querySelector('.game-container');
+            const scoreElement = document.querySelector('.score');
+
+            const messagePopup = document.createElement('div');
+            messagePopup.className = 'message-popup';
+            gameContainer.appendChild(messagePopup);
+
+            function spawnHeart() {
+                if (!gameStarted) return;
+                const heart = document.createElement('div');
+                heart.className = 'pixel-heart';
+                heart.textContent = '❤️';
+                heart.style.left = Math.random() * (gameContainer.offsetWidth - 24) + 'px';
+                heart.style.animationDuration = '4s';
+                gameContainer.appendChild(heart);
+
+                heart.addEventListener('click', () => {
+                    if (heart.parentNode) {
+                        gameContainer.removeChild(heart);
+                        score++;
+                        scoreElement.textContent = `Очки: ${score}`;
+                        showMessage(messages[Math.floor(Math.random() * messages.length)]);
+                    }
+                });
+
+                heart.addEventListener('animationend', () => {
+                    if (heart.parentNode) {
+                        gameContainer.removeChild(heart);
+                        lives--;
+                        livesElement.textContent = `Жизни: ${'❤️'.repeat(lives)}`;
+                        if (lives === 0) {
+                            gameStarted = false;
+                            showMessage('Игра окончена!');
+                        }
+                    }
+                });
+            }
+
+            function showMessage(message) {
+                messagePopup.textContent = message;
+                messagePopup.style.display = 'block';
+                setTimeout(() => {
+                    messagePopup.style.display = 'none';
+                }, 2000);
+            }
+
+            setInterval(spawnHeart, 2000);
+        }
+
+        // Инициализация
+        createStars();
+        setInterval(createFallingStar, 5000);
+
+        function updateTimeTogether() {
+            const startDate = new Date('2023-01-17');
+            const currentDate = new Date();
+            
+            let years = currentDate.getFullYear() - startDate.getFullYear();
+            let months = currentDate.getMonth() - startDate.getMonth();
+            let days = currentDate.getDate() - startDate.getDate();
+
+            if (days < 0) {
+                months--;
+                days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const timeString = `${years} ${getYearWord(years)}, ${months} ${getMonthWord(months)} и ${days} ${getDayWord(days)}`;
+            document.getElementById('time-together').textContent = timeString;
+        }
+        
+        // Update every second
+        setInterval(updateTimeTogether, 1000);
+
+        function getYearWord(number) {
+            if (number === 1) return 'год';
+            if (number >= 2 && number <= 4) return 'года';
+            return 'лет';
+        }
+
+        function getMonthWord(number) {
+            if (number === 1) return 'месяц';
+            if (number >= 2 && number <= 4) return 'месяца';
+            return 'месяцев';
+        }
+
+        function getDayWord(number) {
+            if (number === 1) return 'день';
+            if (number >= 2 && number <= 4) return 'дня';
+            return 'дней';
+        }
+
+        setInterval(createHeart, 2000);
+        updateTimeTogether();
+        setInterval(updateTimeTogether, 1000);
+    </script>
+</body>
+</html>
