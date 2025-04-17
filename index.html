@@ -319,13 +319,20 @@
             messagePopup.className = 'message-popup';
             gameContainer.appendChild(messagePopup);
 
+            let gameStartTime = Date.now();
+            let speedMultiplier = 1;
+            
             function spawnHeart() {
                 if (!gameStarted) return;
                 const heart = document.createElement('div');
                 heart.className = 'pixel-heart';
                 heart.textContent = '❤️';
                 heart.style.left = Math.random() * (gameContainer.offsetWidth - 24) + 'px';
-                heart.style.animationDuration = '4s';
+                
+                // Calculate speed based on elapsed time
+                const elapsedTime = (Date.now() - gameStartTime) / 1000;
+                speedMultiplier = 1 + Math.min(elapsedTime / 30, 3); // Max 4x speed
+                heart.style.animationDuration = `${4 / speedMultiplier}s`;
                 gameContainer.appendChild(heart);
 
                 heart.addEventListener('click', () => {
